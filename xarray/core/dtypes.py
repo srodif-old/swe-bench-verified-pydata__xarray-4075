@@ -26,7 +26,7 @@ class AlwaysLessThan:
         return isinstance(other, type(self))
 
 
-# Equivalence to np.inf (-np.inf) for object-type
+# Equivalence to np.inf (-np.inf) for object-type.
 INF = AlwaysGreaterThan()
 NINF = AlwaysLessThan()
 
@@ -38,7 +38,7 @@ NINF = AlwaysLessThan()
 PROMOTE_TO_OBJECT = [
     {np.number, np.character},  # numpy promotes to character
     {np.bool_, np.character},  # numpy promotes to character
-    {np.bytes_, np.unicode_},  # numpy promotes to unicode
+    {np.bytes_, np.str_},  # numpy promotes to unicode
 ]
 
 

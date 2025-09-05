@@ -309,3 +309,35 @@ def test_weighted_operations_keep_attr_da_in_ds(operation):
     result = getattr(data.weighted(weights), operation)(keep_attrs=True)
 
     assert data.a.attrs == result.a.attrs
+
+
+@pytest.mark.parametrize("as_dataset", (True, False))
+def test_weighted_mean_with_boolean_weights(as_dataset):
+    """Test that boolean weights work correctly in weighted mean.
+    
+    Regression test for issue where boolean weights caused incorrect
+    normalization due to dot product of boolean arrays returning boolean.
+    """
+    # Test case from the issue
+    data = DataArray([1.0, 1.0, 1.0])
+    weights = DataArray(np.array([1, 1, 0], dtype=np.bool_))
+    
+    if as_dataset:
+        data = data.to_dataset(name="data")
+    
+    result = data.weighted(weights).mean()
+    expected = DataArray(1.0)
+    
+    if as_dataset:
+        expected = expected.to_dataset(name="data")
+    
+    assert_equal(expected, result)
+    
+    # Also test sum_of_weights calculation
+    sum_of_weights = data.weighted(weights).sum_of_weights()
+    expected_sum = DataArray(2.0)
+    
+    if as_dataset:
+        expected_sum = expected_sum.to_dataset(name="data")
+        
+    assert_equal(expected_sum, sum_of_weights)
